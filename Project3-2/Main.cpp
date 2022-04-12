@@ -4,8 +4,7 @@ using namespace std;
 using namespace cv;
 
 const string dataPath = "D:/공부/수업 자료/4-1/USG공유대학/컴퓨터비전/과제/data/Practice3/3-2/";
-const string queryFileName = "query.bmp";
-const vector<string> targetFileNames = { "1.bmp", "2.bmp", "3.bmp", "4.bmp", "5.bmp", "6.bmp" };
+const string queryFileName = "query.jpg";
 
 Mat calcHist(Mat& input) {
 	Mat output(1, 256, CV_32F, Scalar(0));
@@ -32,8 +31,11 @@ void main()
 	Mat queryImg = imread(dataPath + queryFileName, IMREAD_GRAYSCALE);
 	Mat queryVector = calcHist(queryImg);
 
-	for (int i = 0; i < targetFileNames.size(); i++) {
-		Mat targetImg = imread(dataPath + targetFileNames[i], IMREAD_GRAYSCALE);
+	for (int i = 1; i <= 50; i++) {
+		char temp[3];
+		sprintf_s(temp, "%d", i);
+		cout << temp << endl;
+		Mat targetImg = imread(dataPath + temp+".jpg", IMREAD_GRAYSCALE);
 		Mat targetVector = calcHist(targetImg);
 		cout << calcDistance(targetVector, queryVector) << endl;
 	}
