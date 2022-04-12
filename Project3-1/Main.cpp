@@ -17,8 +17,24 @@ Mat calcHist(Mat& input) {
 	return output;
 }
 
+double calcDistance(Mat& input1, Mat& input2) 
+{
+	double distance = 0.0;
+
+	for (int i = 0; i < input1.cols; i++)
+		distance += (input1.at<float>(i) - input2.at<float>(i)) * (input1.at<float>(i) - input2.at<float>(i));
+
+	return distance;
+}
+
 void main()
 {
 	Mat queryImg = imread(dataPath + queryFileName, IMREAD_GRAYSCALE);
-
+	Mat queryVector = calcHist(queryImg);
+	
+	for (int i = 0; i < targetFileNames.size(); i++) {
+		Mat targetImg = imread(dataPath + targetFileNames[i], IMREAD_GRAYSCALE);
+		Mat targetVector = calcHist(targetImg);
+		cout << calcDistance(targetVector, queryVector) << endl;
+	}
 }

@@ -3,41 +3,38 @@
 using namespace std;
 using namespace cv;
 
+const string dataPath = "D:/공부/수업 자료/4-1/USG공유대학/컴퓨터비전/과제/data/Practice3/3-2/";
+const string queryFileName = "query.bmp";
+const vector<string> targetFileNames = { "1.bmp", "2.bmp", "3.bmp", "4.bmp", "5.bmp", "6.bmp" };
+
+Mat calcHist(Mat& input) {
+	Mat output(1, 256, CV_32F, Scalar(0));
+
+	for (int i = 0; i < input.rows; i++)
+		for (int j = 0; j < input.cols; j++)
+			output.at<float>(input.at<uchar>(i, j))++;
+	output /= input.total();
+	return output;
+}
+
+double calcDistance(Mat& input1, Mat& input2)
+{
+	double distance = 0.0;
+
+	for (int i = 0; i < input1.cols; i++)
+		distance += (input1.at<float>(i) - input2.at<float>(i)) * (input1.at<float>(i) - input2.at<float>(i));
+
+	return distance;
+}
+
 void main()
 {
-	Mat cFrame, vFrame, qrImage, wFrame, sMask, wMask;
-	vector<Point2f> bbox;
-	string data;
-	VideoCapture cam(0), video;
-	QRCodeDetector qr;
-	double width, height;
-	vector<Point2f> v_bbox;
+	Mat queryImg = imread(dataPath + queryFileName, IMREAD_GRAYSCALE);
+	Mat queryVector = calcHist(queryImg);
 
-	while (true) {
-		cam >> cFrame;
-		data = qr.detectAndDecode(cFrame, bbox, qrImage);
-		if (data.length() > 0)
-		{
-			if (!video.isOpened()) {
-				video.open("../data/" + data);
-				width = video.get(CAP_PROP_FRAME_WIDTH);
-				height = video.get(CAP_PROP_FRAME_HEIGHT);
-				v_bbox.push_back(Point2f(0, 0));
-				v_bbox.push_back(Point2f(width, 0));
-				v_bbox.push_back(Point2f(width, height));
-				v_bbox.push_back(Point2f(0, height));
-				sMask = Mat(Size(width,height), CV_8UC3, Scalar(255,255,255));
-			}
-			Mat H = findHomography(v_bbox, bbox);
-			video >> vFrame;
-			warpPerspective(vFrame, wFrame, H, cFrame.size());
-			warpPerspective(sMask, wMask, H, cFrame.size());
-			wFrame.copyTo(cFrame, wMask);
-			imshow("wFrame", wFrame);
-			imshow("wMask", wMask);
-			imshow("qrImage", qrImage);
-		}
-		imshow("frame", cFrame);
-		waitKey(1);
+	for (int i = 0; i < targetFileNames.size(); i++) {
+		Mat targetImg = imread(dataPath + targetFileNames[i], IMREAD_GRAYSCALE);
+		Mat targetVector = calcHist(targetImg);
+		cout << calcDistance(targetVector, queryVector) << endl;
 	}
 }
