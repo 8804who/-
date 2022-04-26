@@ -4,25 +4,26 @@ using namespace std;
 using namespace cv;
 
 const string imgPath = "D:/공부/수업 자료/4-1/USG공유대학/컴퓨터비전/과제/data/Practice3/butterfly.jpg";
-
-Mat gray;
-int std_dev = 10;
-
-void GaussianBlur(int, void*) 
-{
-	if (std_dev) {
-		Mat result;
-		GaussianBlur(gray, result, Size(0, 0), (double)std_dev / 10.0);
-		imshow("result", result);
-	}
-}
+const string imgPath2 = "D:/공부/수업 자료/4-1/USG공유대학/컴퓨터비전/과제/data/Practice3/butterfly2.jpg";
 
 int main(int argc,  char** argv)
 {
-	gray = imread(imgPath, IMREAD_GRAYSCALE);
-	imshow("gray", gray);
-	createTrackbar("10*std_dev: ", "gray", &std_dev, 100, GaussianBlur);
-	GaussianBlur(0, 0);
+	Mat img = imread(imgPath), result;
+	Mat img2 = imread(imgPath2), result2;
+	vector<KeyPoint> kps;
+	vector<KeyPoint> kps2;
+
+	Ptr<Feature2D> sift = SIFT::create();
+	Ptr<Feature2D> sift2 = SIFT::create();
+
+
+	sift->detect(img, kps);
+	sift2->detect(img2, kps2);
+
+	drawKeypoints(img, kps, result, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+	imshow("result", result);
+	drawKeypoints(img2, kps2, result2, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+	imshow("result2", result2);
 	waitKey();
 	return 0;
 }
