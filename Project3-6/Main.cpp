@@ -14,16 +14,16 @@ int main(int argc,  char** argv)
 	vector<KeyPoint> kps2;
 
 	Ptr<Feature2D> sift = SIFT::create();
+	Ptr<Feature2D> sift2 = SIFT::create();
 
 
 	sift->detect(img, kps);
+	sift2->detect(img2, kps2);
+
 	drawKeypoints(img, kps, result, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 	imshow("result", result);
-
-	sift->detect(img2, kps2);
 	drawKeypoints(img2, kps2, result2, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 	imshow("result2", result2);
-
 	waitKey();
 	return 0;
 }
